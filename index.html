@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="style.css">
+<div class="background">
+    <div class="playerWeapon">
+        <audio id="ak_shooting_sound" src="assets/ak_shooting_sound.ogg"></audio>
+        <img src="assets/ak.png" id="weapon_ak">
+    </div>
+</div>
+
+<script>
+    document.addEventListener('click', handleClick, true);
+
+    function handleClick() {
+
+        ak_shooting = document.getElementById('ak_shooting_sound');
+        ak_shooting.volume = 0.5;
+        
+        ak_shooting.play();
+        setTimeout(function() {
+            ak_shooting.cloneNode(true).play();
+        }, 400);
+
+        setTimeout(function() {
+            ak_shooting.cloneNode(true).play();
+        }, 400);
+
+        setTimeout(function() {
+            ak_shooting.cloneNode(true).play();
+        }, 400);
+
+    }
+</script>

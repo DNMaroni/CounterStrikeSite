@@ -1,0 +1,25 @@
+body{
+    margin: 0;
+    cursor: crosshair;
+}
+
+.background{
+    background-image: url('assets/dust2_spot2.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100%;
+    position: relative;
+}
+
+.playerWeapon{
+    position: absolute;
+    bottom: 0;
+    right: 20%;
+    user-select: none;
+    pointer-events: none;
+}
+
+.playerWeapon img{
+    user-select: none;
+    width: 35vw;
+}
