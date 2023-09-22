@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="style.css">
 <div class="background">
     <div class="playerWeapon">
-        <audio id="ak_shooting_sound" src="assets/ak_shooting_sound.ogg"></audio>
+        <div id="ak_shooting_sound"></div>
         <img src="assets/ak.png" id="weapon_ak">
     </div>
 </div>
@@ -11,21 +11,13 @@
 
     function handleClick() {
 
-        ak_shooting = document.getElementById('ak_shooting_sound');
-        ak_shooting.volume = 0.5;
-        
-        ak_shooting.play();
-        setTimeout(function() {
-            ak_shooting.cloneNode(true).play();
-        }, 400);
-
-        setTimeout(function() {
-            ak_shooting.cloneNode(true).play();
-        }, 400);
-
-        setTimeout(function() {
-            ak_shooting.cloneNode(true).play();
-        }, 400);
-
+        var newSound = document.createElement("audio");
+        newSound.src = "assets/ak_shooting_sound.ogg";
+        document.getElementById('ak_shooting_sound').appendChild(newSound);
+        newSound.volume = 0.5;
+        newSound.play();
+        newSound.addEventListener('ended',function(){
+            newSound.remove();
+        });
     }
 </script>
