@@ -1,23 +1,152 @@
+<script>
+
+	/**
+	 * @interface
+	*/
+	class Weapon {
+		/**
+		 * @abstract
+		 */
+		fire() {
+			
+			if(this.totalBullets <= 0 && this.currentBullets <= 0){
+				insertSoundOnBoard(this.emptySound);
+				return;
+			}
+			
+			insertSoundOnBoard(this.shootingSound, this.shootingSoundVelocity, this.shootingVolume);
+
+			this.currentBullets-=1;
+			
+			if(this.currentBullets == 0){
+				this.reloading = true;
+
+				setTimeout(f => {
+					this.reload();
+				}, 500);
+			}
+		}
+
+		reload() {
+
+			if(this.totalBullets <= 0){
+				insertSoundOnBoard(this.emptySound);
+				this.reloading = false;
+				return;
+			}
+
+			insertSoundOnBoard(this.reloadingSound);
+
+			setTimeout(f => {
+				var loadQuantity = this.maxBullets - this.currentBullets;
+				this.currentBullets = loadQuantity > this.totalBullets ? this.totalBullets : (this.currentBullets + loadQuantity);
+				this.totalBullets = loadQuantity > this.totalBullets ? 0 : (this.totalBullets - loadQuantity);
+
+				this.reloading = false;
+			}, 4000);
+		}
+	}
+
+	window.insertSoundOnBoard = (file, velocity = 1.5, volume = 0.02) => {
+
+		var newSound = document.createElement("audio");
+		newSound.src = file;
+		document.getElementById('sound_board').appendChild(newSound);
+		newSound.volume = volume;
+		newSound.playbackRate = velocity;
+		newSound.play();
+		newSound.addEventListener('ended',function(){
+			newSound.remove();
+		});
+
+	};
+
+	class Ak extends Weapon {
+
+		//Ammunation
+		currentBullets = 24;
+		totalBullets = 53;
+		maxBullets = 30;
+
+		//sound configs
+		shootingSoundVelocity = 1.5;
+		shootingVolume = 0.02;
+
+		//style
+		class = 'akStyle';
+		reloading = false;
+
+		//sources
+		akImage = 'assets/weapons/ak.png';
+		shootingSound = 'assets/sounds/ak_shooting_sound.ogg';
+		emptySound = 'assets/sounds/empty_weapon_sound.wav';
+		reloadingSound = 'assets/sounds/ak_reload_sound.mp3';
+	}
+
+	class Glock extends Weapon {
+		currentBullets = 20;
+		totalBullets = 120;
+		maxBullets = 20;
+		shootingSoundVelocity = 1;
+		shootingVolume = 0.4;
+		reloading = false;
+		class = 'glockStyle';
+		akImage = 'assets/weapons/glock.webp';
+		shootingSound = 'assets/sounds/glock_shooting_sound.mp3';
+		emptySound = 'assets/sounds/empty_weapon_sound.wav';
+		reloadingSound = 'assets/sounds/glock_reload_sound.mp3';
+	}
+</script>
+
+<link rel="stylesheet" href="cssreset.css">
 <link rel="stylesheet" href="style.css">
 <div class="background">
-    <div class="playerWeapon">
-        <div id="ak_shooting_sound"></div>
-        <img src="assets/ak.png" id="weapon_ak">
+	<div class="weaponsViewContainer">
+		<div class="numberContainer"><img src="assets/weapons/weapon_ak47.png" id="ak_view"><div class="number">1</div></div><br><br><br>
+		<div class="numberContainer"><img src="assets/weapons/weapon_glock.png" id="glock_view"><div class="number">2</div></div>
+	</div>
+	<div class="ammoContainer">
+		<p id="current_ammo"></p>
+		<p id="slash">/</p>
+		<p id="total_ammo"></p>
+	</div>
+    <div class="weaponContainer">
+        <div id="sound_board"></div>
+        <img id="weapon_element">
     </div>
 </div>
 
 <script>
-    document.addEventListener('click', handleClick, true);
+    document.addEventListener('click', () => {
+		if(!weapons[currentWeapon].reloading){
+			handleShoot();
+		}
+	}, true);
 
-    function handleClick() {
+	const weapons = {
+		1 : new Ak(),
+		2 : new Glock(),
+	};
+	var currentWeapon = 2;
 
-        var newSound = document.createElement("audio");
-        newSound.src = "assets/ak_shooting_sound.ogg";
-        document.getElementById('ak_shooting_sound').appendChild(newSound);
-        newSound.volume = 0.5;
-        newSound.play();
-        newSound.addEventListener('ended',function(){
-            newSound.remove();
-        });
+	function runGame() {     
+		
+		setTimeout(function() { 
+			console.log('game running');
+			weapon_element.src = weapons[currentWeapon].akImage;
+			weapon_element.className = '';
+			weapon_element.classList.add(weapons[currentWeapon].class);
+			current_ammo.innerHTML = weapons[currentWeapon].currentBullets;
+			total_ammo.innerHTML = weapons[currentWeapon].totalBullets;
+
+			runGame()
+		}, 100)
+	}
+
+	
+    function handleShoot() {
+		weapons[currentWeapon].fire();
     }
+
+	document.addEventListener("DOMContentLoaded", (event) => runGame());
 </script>

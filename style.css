@@ -1,17 +1,74 @@
+@font-face {
+    font-family: Csfont;
+    src: url("assets/fonts/cs.woff") format("woff");
+}
+
+html * {
+    font-family: Csfont, Arial, sans-serif;
+    font-weight:normal;
+    font-style:normal;
+    user-select: none;
+}
+
 body{
     margin: 0;
     cursor: crosshair;
 }
 
 .background{
-    background-image: url('assets/dust2_spot2.webp');
+    background-image: url('assets/maps/dust2_spot2.webp');
     background-size: cover;
     background-repeat: no-repeat;
     height: 100%;
     position: relative;
 }
 
-.playerWeapon{
+.weaponsViewContainer{
+    position: absolute;
+    right: 1%;
+    bottom: 20%;
+    text-align: right;
+}
+
+.weaponsViewContainer img{
+    transform: rotateY(180deg);
+}
+
+.ammoContainer{
+    position: absolute;
+    bottom: 1%;
+    right: 5%;
+}
+
+.numberContainer {
+    position: relative;
+}
+
+.numberContainer .number{
+    position: absolute;
+    right: -15px;
+    top: 0;
+    color: white;
+}
+
+.ammoContainer p{
+    display: inline-block;
+}
+
+.ammoContainer #current_ammo{
+    font-weight: 500;
+    font-size: 50px;
+    color: white;
+}
+
+.ammoContainer #total_ammo, #slash{
+    font-weight: 500;
+    font-size: 25px;
+    color: white;
+}
+
+
+.weaponContainer{
     position: absolute;
     bottom: 0;
     right: 20%;
@@ -19,7 +76,12 @@ body{
     pointer-events: none;
 }
 
-.playerWeapon img{
+.glockStyle{
+    user-select: none;
+    width: 17vw;
+}
+
+.akStyle{
     user-select: none;
     width: 35vw;
 }
