@@ -8,11 +8,13 @@ html * {
     font-weight:normal;
     font-style:normal;
     user-select: none;
+    overflow: hidden;
 }
 
 body{
     margin: 0;
-    cursor: crosshair;
+    /* cursor: crosshair; */
+    cursor:url(assets/interface/cursor.png), auto;
 }
 
 .background{
@@ -51,6 +53,14 @@ body{
     color: white;
 }
 
+.numberContainer hr{
+    margin: 0;
+    width: 10px;
+    position: absolute;
+    right: 0;
+    margin-top: 2rem;
+}
+
 .ammoContainer p{
     display: inline-block;
 }
@@ -70,7 +80,7 @@ body{
 
 .weaponContainer{
     position: absolute;
-    bottom: 0;
+    bottom: -2%;
     right: 20%;
     user-select: none;
     pointer-events: none;
@@ -79,9 +89,92 @@ body{
 .glockStyle{
     user-select: none;
     width: 17vw;
+    filter: brightness(1.35);
 }
 
 .akStyle{
     user-select: none;
     width: 35vw;
+    filter: brightness(1.35);
+}
+
+.shakeWeapon{
+  animation: shake 0.5s;
+  animation-iteration-count: infinite;
+}
+
+/* 
+#dummyContainer{
+    width: 
+} */
+
+
+.playButton{
+    width: 3rem;
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+}
+.playButton img{
+    width: 100%;
+}
+
+.playButton img:hover{
+    background-color: red;
+    border-radius: 50%;
+}
+
+#dummyContainer img{
+    width: 100%;
+}
+
+.numberStartingContainer{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.numberStartingContainer p{
+    font-weight: 500;
+    font-size: 90;
+    color: red;
+}
+
+.dummy1{
+    left: 60%;
+    top: 41.5%;
+    position: absolute;
+    /* animation: moveAnimation 4s infinite alternate; */
+}
+.dummy1 img{
+    transform: rotate(6deg);
+    user-select: none;
+    /* pointer-events: none; */
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+  }
+
+@keyframes moveAnimation {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-50px)
+    }
+    75% {
+      transform: translateX(50px);
+    }
 }

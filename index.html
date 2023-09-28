@@ -9,25 +9,27 @@
 		 */
 		fire() {
 			
-			if(this.totalBullets <= 0 && this.currentBullets <= 0){
+			if(this.currentBullets <= 0){
 				insertSoundOnBoard(this.emptySound);
 				return;
 			}
 			
+			weapon_element.classList.add('shakeWeapon');
 			insertSoundOnBoard(this.shootingSound, this.shootingSoundVelocity, this.shootingVolume);
 
-			this.currentBullets-=1;
-			
-			if(this.currentBullets == 0){
-				this.reloading = true;
+			setTimeout(f => {
+				weapon_element.classList.remove('shakeWeapon');
+			}, 1000);
 
-				setTimeout(f => {
-					this.reload();
-				}, 500);
-			}
+			this.currentBullets-=1;
 		}
 
 		reload() {
+
+			if(this.currentBullets == this.maxBullets){
+				this.reloading = false;
+				return;
+			}
 
 			if(this.totalBullets <= 0){
 				insertSoundOnBoard(this.emptySound);
@@ -35,7 +37,7 @@
 				return;
 			}
 
-			insertSoundOnBoard(this.reloadingSound);
+			insertSoundOnBoard(this.reloadingSound, this.reloadingVelocity, this.reloadingVolume);
 
 			setTimeout(f => {
 				var loadQuantity = this.maxBullets - this.currentBullets;
@@ -43,11 +45,64 @@
 				this.totalBullets = loadQuantity > this.totalBullets ? 0 : (this.totalBullets - loadQuantity);
 
 				this.reloading = false;
-			}, 4000);
+			}, (this.reloadingSpeed * 1000));
 		}
 	}
 
-	window.insertSoundOnBoard = (file, velocity = 1.5, volume = 0.02) => {
+	
+	/**
+	 * @interface
+	*/
+	class Enemy {
+		/**
+		 * @abstract
+		 */
+		putOnBoard(){
+			var element = document.createElement('div');
+			element.innerHTML = '<img draggable="false" usemap="#image_map'+this.id+'" src="'+this.image+'">';
+			element.classList.add(this.class);
+			element.id = 'enemie_'+this.id;
+			
+			//maps
+			var mapElement = document.createElement('map');
+			mapElement.name = "image_map"+this.id;
+			
+			var areaTargets = '';
+
+			areaTargets += '<area target coords="'+this.maps['head']+'" title="head" onclick="weaponHit('+element.id+')" shape="rect">';
+
+			for(var coords in this.maps['body']){
+				areaTargets += '<area target coords="'+this.maps['body'][coords]+'" title="body" onclick="bodyHit('+element.id+')" shape="rect">';
+			}
+
+			mapElement.innerHTML = areaTargets;
+
+			element.appendChild(mapElement);
+
+			screen_board.appendChild(element);
+		}
+
+		behavior(){}
+	}
+
+	class Dummy1 extends Enemy{
+		id = 1
+		health = 100
+		image = "assets/enemies/dummy_63x82.png"
+		class = "dummy1"
+		maps = {
+			'head' : '24,4,40,23',
+			'body' : [
+				'19,23,47,79',
+				'8,23,21,42',
+				'57,35,48,55',
+				'62,78,50,57'
+			]
+		}
+		
+	}
+
+	window.insertSoundOnBoard = (file, velocity = 1.5, volume = 0.04) => {
 
 		var newSound = document.createElement("audio");
 		newSound.src = file;
@@ -63,6 +118,9 @@
 
 	class Ak extends Weapon {
 
+		//states
+		reloading = false;
+
 		//Ammunation
 		currentBullets = 24;
 		totalBullets = 53;
@@ -70,12 +128,14 @@
 
 		//sound configs
 		shootingSoundVelocity = 1.5;
-		shootingVolume = 0.02;
+		shootingVolume = 0.1;
+		reloadingVelocity = 1.5;
+		reloadingVolume = 0.4;
+		reloadingSpeed = 4;
 
 		//style
 		class = 'akStyle';
-		reloading = false;
-
+		
 		//sources
 		akImage = 'assets/weapons/ak.png';
 		shootingSound = 'assets/sounds/ak_shooting_sound.ogg';
@@ -84,13 +144,26 @@
 	}
 
 	class Glock extends Weapon {
+		
+		//states
+		reloading = false;
+
+		//Ammunation
 		currentBullets = 20;
 		totalBullets = 120;
 		maxBullets = 20;
+
+		//sound configs
 		shootingSoundVelocity = 1;
-		shootingVolume = 0.4;
-		reloading = false;
+		shootingVolume = 0.5;
+		reloadingVelocity = 1;
+		reloadingVolume = 0.5;
+		reloadingSpeed = 2;
+
+		//style
 		class = 'glockStyle';
+
+		//sources
 		akImage = 'assets/weapons/glock.webp';
 		shootingSound = 'assets/sounds/glock_shooting_sound.mp3';
 		emptySound = 'assets/sounds/empty_weapon_sound.wav';
@@ -98,11 +171,21 @@
 	}
 </script>
 
-<link rel="stylesheet" href="cssreset.css">
-<link rel="stylesheet" href="style.css">
-<div class="background">
+<head>
+	<link rel="stylesheet" href="cssreset.css">
+	<link rel="stylesheet" href="style.css">
+	<link
+	  rel="stylesheet"
+	  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+	/>
+</head>
+
+<div class="background" id="screen_board">
+	<!-- <div id="dummyContainer"><img src="assets/enemies/dummy.png"></div> -->
+	<div class="numberStartingContainer" id="number_start"></div>
+	<div class="playButton" onclick="startGame()"><img src="assets/interface/play.png"></div>
 	<div class="weaponsViewContainer">
-		<div class="numberContainer"><img src="assets/weapons/weapon_ak47.png" id="ak_view"><div class="number">1</div></div><br><br><br>
+		<div class="numberContainer"><img src="assets/weapons/weapon_ak47.png" id="ak_view"><div class="number">1</div><hr></div><br><br><br>
 		<div class="numberContainer"><img src="assets/weapons/weapon_glock.png" id="glock_view"><div class="number">2</div></div>
 	</div>
 	<div class="ammoContainer">
@@ -123,14 +206,54 @@
 		}
 	}, true);
 
+	// get random item from a Set
+	function getRandomItem(set) {
+		let items = Array.from(set);
+		return items[Math.floor(Math.random() * items.length)];
+	}
 	const weapons = {
 		1 : new Ak(),
 		2 : new Glock(),
 	};
-	var currentWeapon = 2;
 
-	function runGame() {     
-		
+	const enemies = [
+		new Dummy1()
+	];
+	
+	var currentWeapon = 1;
+
+	function spawnEnemie(){
+		var currentEnemy = enemies[Math.floor(Math.random() * enemies.length)];
+		currentEnemy.putOnBoard();
+	}	
+
+	function showTimerNumber(number){
+
+		if(number == 0){
+			spawnEnemie();
+			return;
+		}
+
+		number_start.innerHTML = '<p class="animate__animated animate__fadeOut">'+number+'</p>'
+
+		setTimeout(function() { 
+			showTimerNumber(--number)
+		}, 1000);
+	}
+
+	function startGame(){
+
+		setTimeout(function() { 
+	
+			insertSoundOnBoard('assets/sounds/start_game.mp3', 1, 0.2);
+			
+			showTimerNumber(3);
+
+		}, 1000);
+	}
+
+	function updateInterface() {     
+
 		setTimeout(function() { 
 			console.log('game running');
 			weapon_element.src = weapons[currentWeapon].akImage;
@@ -139,7 +262,8 @@
 			current_ammo.innerHTML = weapons[currentWeapon].currentBullets;
 			total_ammo.innerHTML = weapons[currentWeapon].totalBullets;
 
-			runGame()
+
+			updateInterface()
 		}, 100)
 	}
 
@@ -148,5 +272,29 @@
 		weapons[currentWeapon].fire();
     }
 
-	document.addEventListener("DOMContentLoaded", (event) => runGame());
+	function weaponHit(enemyID) {
+		console.log('headshot');
+		insertSoundOnBoard('assets/sounds/shot_hitting.mp3', 1.0, 0.5);
+	}
+
+	function bodyHit(enemyID) {
+		console.log('bodyshot');
+	}
+
+	document.addEventListener("DOMContentLoaded", (event) => {
+		updateInterface();
+		spawnEnemie();
+	});
+
+	document.addEventListener("keypress", function(event) {
+
+		if ((event.key == 1 || event.key == 2) && currentWeapon != event.key) {
+			currentWeapon = event.key;
+		}
+
+		if(event.key == 'r' && !weapons[currentWeapon].reloading){
+			weapons[currentWeapon].reloading = true;
+			weapons[currentWeapon].reload();
+		} 
+	});
 </script>
