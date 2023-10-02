@@ -14,7 +14,7 @@ html * {
 body{
     margin: 0;
     /* cursor: crosshair; */
-    cursor:url(assets/interface/cursor.png), auto;
+    cursor:url(assets/interface/cursor.png) 8 10, auto;
 }
 
 .background{
@@ -103,12 +103,6 @@ body{
   animation-iteration-count: infinite;
 }
 
-/* 
-#dummyContainer{
-    width: 
-} */
-
-
 .playButton{
     width: 3rem;
     position: absolute;
@@ -141,16 +135,40 @@ body{
     color: red;
 }
 
-.dummy1{
+.terrorist1{
     left: 60%;
     top: 41.5%;
     position: absolute;
-    /* animation: moveAnimation 4s infinite alternate; */
+    overflow: initial;
+    animation: moveAnimation 3s infinite alternate;
 }
-.dummy1 img{
+.terrorist1 img{
+    width: 81px;
     transform: rotate(6deg);
     user-select: none;
     /* pointer-events: none; */
+}
+
+.damage{
+    font-weight: 600;
+    font-size: 17px;
+    color: red;
+    position: absolute;
+    left: 41%;
+    top: -15%;
+    font-family: initial !important;
+}
+
+.chiken{
+    top: 51.5%;
+    left: 31%;
+    position: absolute;
+    overflow: initial;
+    animation: chickenMove1 3s infinite;
+}
+
+.chiken img{
+    width: 60px;
 }
 
 @keyframes shake {
@@ -172,9 +190,21 @@ body{
       transform: translateX(0);
     }
     25% {
-      transform: translateX(-50px)
+      transform: translateX(-30px)
     }
     75% {
-      transform: translateX(50px);
+      transform: translateX(20px);
+    }
+}
+
+@keyframes chickenMove1 {
+    0% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(300px, 80px);
+    }
+    100% {
+      transform: translate(0, 0);
     }
 }

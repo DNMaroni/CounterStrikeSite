@@ -58,10 +58,13 @@
 		 * @abstract
 		 */
 		putOnBoard(){
+			console.log('oi');
+			insertSoundOnBoard(this.spawnSound, 1, 0.5);
+			
 			var element = document.createElement('div');
 			element.innerHTML = '<img draggable="false" usemap="#image_map'+this.id+'" src="'+this.image+'">';
 			element.classList.add(this.class);
-			element.id = 'enemie_'+this.id;
+			element.id = this.id;
 			
 			//maps
 			var mapElement = document.createElement('map');
@@ -69,10 +72,10 @@
 			
 			var areaTargets = '';
 
-			areaTargets += '<area target coords="'+this.maps['head']+'" title="head" onclick="weaponHit('+element.id+')" shape="rect">';
+			if(this.maps['head'] != null) areaTargets += '<area target coords="'+this.maps['head']+'" title="head" onclick="takeHit(true)" shape="poly">';
 
 			for(var coords in this.maps['body']){
-				areaTargets += '<area target coords="'+this.maps['body'][coords]+'" title="body" onclick="bodyHit('+element.id+')" shape="rect">';
+				areaTargets += '<area target coords="'+this.maps['body'][coords]+'" title="body" onclick="takeHit(false)" shape="poly">';
 			}
 
 			mapElement.innerHTML = areaTargets;
@@ -82,30 +85,75 @@
 			screen_board.appendChild(element);
 		}
 
-		behavior(){}
+		takeDamage(head){
+			insertSoundOnBoard(this.damageSound, 1.0, 0.1);
+			var damageTaken = head ? weapons[currentWeapon].hsDamage : weapons[currentWeapon].damage;
+			this.health -= damageTaken;
+			var element = document.getElementById(this.id);
+
+			var damageTakenElement = document.createElement('span');
+			damageTakenElement.classList.add('damage');
+			damageTakenElement.classList.add('animate__animated');
+			damageTakenElement.classList.add('animate__fadeOutUp');
+			damageTakenElement.innerHTML = '-'+damageTaken;
+
+			element.appendChild(damageTakenElement);
+			if(this.health <= 0){
+				setTimeout(f => {
+					this.kill();
+				}, 600);
+			}
+		}
+
+		kill(){
+			var element = document.getElementById(this.id);
+			enemies.splice(enemies.indexOf(currentEnemy), 1);
+			element.remove();
+			spawnEnemie();
+		}
 	}
 
-	class Dummy1 extends Enemy{
-		id = 1
+	class Terrorist1 extends Enemy{
+		id = "enemie_1"
 		health = 100
-		image = "assets/enemies/dummy_63x82.png"
-		class = "dummy1"
+		image = "assets/enemies/terrorist.png"
+		damageSound = "assets/sounds/shot_hitting.mp3"
+		spawnSound = "assets/sounds/terrorist_spawn.mp3"
+		class = "terrorist1"
 		maps = {
-			'head' : '24,4,40,23',
+			'head' : '33,14,51,17,54,34,37,39',
 			'body' : [
-				'19,23,47,79',
-				'8,23,21,42',
-				'57,35,48,55',
-				'62,78,50,57'
+				'63,31,31,40,47,80,72,80',
+				'31,46,7,49,24,65,39,60'
 			]
 		}
-		
 	}
 
-	window.insertSoundOnBoard = (file, velocity = 1.5, volume = 0.04) => {
+	class Chiken extends Enemy{
+		id = "enemie_2"
+		health = 100
+		image = "assets/enemies/chiken.png"
+		damageSound = "assets/sounds/chicken_damage.mp3"
+		spawnSound = "assets/sounds/chicken_spawn.mp3"
+		class = "chiken"
+		maps = {
+			'head' : null,
+			'body' : [
+				'17,6,13,34,22,56,41,54,49,33,44,17,33,23'
+			]
+		}
+	}
+	
+
+	window.insertSoundOnBoard = (file, velocity = 1.5, volume = 0.04, loop = false) => {
 
 		var newSound = document.createElement("audio");
 		newSound.src = file;
+
+		if(loop){
+			newSound.setAttribute('loop', '');
+		}
+
 		document.getElementById('sound_board').appendChild(newSound);
 		newSound.volume = volume;
 		newSound.playbackRate = velocity;
@@ -122,9 +170,11 @@
 		reloading = false;
 
 		//Ammunation
-		currentBullets = 24;
-		totalBullets = 53;
+		currentBullets = 30;
+		totalBullets = 200;
 		maxBullets = 30;
+		damage = 30;
+		hsDamage = 50;
 
 		//sound configs
 		shootingSoundVelocity = 1.5;
@@ -152,6 +202,8 @@
 		currentBullets = 20;
 		totalBullets = 120;
 		maxBullets = 20;
+		damage = 15;
+		hsDamage = 30;
 
 		//sound configs
 		shootingSoundVelocity = 1;
@@ -183,7 +235,7 @@
 <div class="background" id="screen_board">
 	<!-- <div id="dummyContainer"><img src="assets/enemies/dummy.png"></div> -->
 	<div class="numberStartingContainer" id="number_start"></div>
-	<div class="playButton" onclick="startGame()"><img src="assets/interface/play.png"></div>
+	<div class="playButton" id="playButton" onclick="startGame()"><img src="assets/interface/play.png"></div>
 	<div class="weaponsViewContainer">
 		<div class="numberContainer"><img src="assets/weapons/weapon_ak47.png" id="ak_view"><div class="number">1</div><hr></div><br><br><br>
 		<div class="numberContainer"><img src="assets/weapons/weapon_glock.png" id="glock_view"><div class="number">2</div></div>
@@ -206,24 +258,27 @@
 		}
 	}, true);
 
-	// get random item from a Set
 	function getRandomItem(set) {
 		let items = Array.from(set);
 		return items[Math.floor(Math.random() * items.length)];
 	}
+
 	const weapons = {
 		1 : new Ak(),
 		2 : new Glock(),
 	};
 
-	const enemies = [
-		new Dummy1()
+	var enemies = [
+		new Chiken(),
+		new Terrorist1()
 	];
 	
 	var currentWeapon = 1;
+	var gameRunning = false;
+	var currentEnemy;
 
 	function spawnEnemie(){
-		var currentEnemy = enemies[Math.floor(Math.random() * enemies.length)];
+		currentEnemy = enemies[Math.floor(Math.random() * enemies.length)];
 		currentEnemy.putOnBoard();
 	}	
 
@@ -243,19 +298,24 @@
 
 	function startGame(){
 
-		setTimeout(function() { 
-	
-			insertSoundOnBoard('assets/sounds/start_game.mp3', 1, 0.2);
-			
-			showTimerNumber(3);
+		if(!gameRunning){
+			gameRunning = true;
+			playButton.style.display = 'none';
+			insertSoundOnBoard('assets/sounds/battle_song.mp3', 1, 0.02, true);
 
-		}, 1000);
+			setTimeout(function() { 
+		
+				insertSoundOnBoard('assets/sounds/start_game.mp3', 1, 0.2);
+				
+				showTimerNumber(3);
+	
+			}, 1000);
+		}
 	}
 
 	function updateInterface() {     
 
 		setTimeout(function() { 
-			console.log('game running');
 			weapon_element.src = weapons[currentWeapon].akImage;
 			weapon_element.className = '';
 			weapon_element.classList.add(weapons[currentWeapon].class);
@@ -272,18 +332,14 @@
 		weapons[currentWeapon].fire();
     }
 
-	function weaponHit(enemyID) {
-		console.log('headshot');
-		insertSoundOnBoard('assets/sounds/shot_hitting.mp3', 1.0, 0.5);
-	}
-
-	function bodyHit(enemyID) {
-		console.log('bodyshot');
+	function takeHit(head) {
+		if(weapons[currentWeapon].currentBullets != 0 && !weapons[currentWeapon].reloading){
+			currentEnemy.takeDamage(head);
+		}
 	}
 
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
-		spawnEnemie();
 	});
 
 	document.addEventListener("keypress", function(event) {
