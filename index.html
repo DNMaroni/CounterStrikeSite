@@ -58,7 +58,7 @@
 		 * @abstract
 		 */
 		putOnBoard(){
-			console.log('oi');
+
 			insertSoundOnBoard(this.spawnSound, 1, 0.5);
 			
 			var element = document.createElement('div');
@@ -80,28 +80,57 @@
 
 			mapElement.innerHTML = areaTargets;
 
+			var hpBarElement = document.createElement('div');
+			hpBarElement.classList.add('hpBar');
+			hpBarElement.innerHTML = '<div class="hpBarGreen" id="hpbar'+this.id+'"></div><div class="hpBarRed" id="hpbarred'+this.id+'"></div>';
+
 			element.appendChild(mapElement);
+			element.appendChild(hpBarElement);
 
 			screen_board.appendChild(element);
 		}
 
-		takeDamage(head){
-			insertSoundOnBoard(this.damageSound, 1.0, 0.1);
-			var damageTaken = head ? weapons[currentWeapon].hsDamage : weapons[currentWeapon].damage;
-			this.health -= damageTaken;
-			var element = document.getElementById(this.id);
 
-			var damageTakenElement = document.createElement('span');
-			damageTakenElement.classList.add('damage');
-			damageTakenElement.classList.add('animate__animated');
-			damageTakenElement.classList.add('animate__fadeOutUp');
-			damageTakenElement.innerHTML = '-'+damageTaken;
+		updateHealthBar() {
 
-			element.appendChild(damageTakenElement);
+			console.log(this.health);
+
+			var a = this.health * (100 / this.maxHealth);
+
+			var mainBar = document.getElementById('hpbar'+this.id)
+			var redBar = document.getElementById('hpbarred'+this.id)
+			mainBar.style.width = a + "%";
+
+			console.log(a);
+			setTimeout(f => {
+				redBar.style.width = a + "%";
+			}, 100 );
+		}
+
+		takeDamage(head = false){
+			
+			if(this.health > 0){
+				
+				insertSoundOnBoard(head ? this.headshotSound : this.damageSound, 1.0, 0.1);
+
+				var damageTaken = head ? weapons[currentWeapon].hsDamage : weapons[currentWeapon].damage;
+				this.health -= damageTaken;
+				this.updateHealthBar();
+				var element = document.getElementById(this.id);
+	
+				var damageTakenElement = document.createElement('span');
+				damageTakenElement.classList.add('damage');
+				damageTakenElement.classList.add('animate__animated');
+				damageTakenElement.classList.add('animate__fadeOutUp');
+				damageTakenElement.innerHTML = '-'+damageTaken;
+	
+				element.appendChild(damageTakenElement);
+			}
+			
 			if(this.health <= 0){
 				setTimeout(f => {
 					this.kill();
-				}, 600);
+				}, 200);
 			}
 		}
 
@@ -109,16 +138,20 @@
 			var element = document.getElementById(this.id);
 			enemies.splice(enemies.indexOf(currentEnemy), 1);
 			element.remove();
+			insertSoundOnBoard(this.dyingSound, 1, 0.5);
 			spawnEnemie();
 		}
 	}
 
 	class Terrorist1 extends Enemy{
 		id = "enemie_1"
-		health = 100
+		maxHealth = 100
+		health = this.maxHealth
 		image = "assets/enemies/terrorist.png"
 		damageSound = "assets/sounds/shot_hitting.mp3"
+		headshotSound = "assets/sounds/headshot_sound.mp3"
 		spawnSound = "assets/sounds/terrorist_spawn.mp3"
+		dyingSound = "assets/sounds/enemy_dying.mp3"
 		class = "terrorist1"
 		maps = {
 			'head' : '33,14,51,17,54,34,37,39',
@@ -131,10 +164,12 @@
 
 	class Chiken extends Enemy{
 		id = "enemie_2"
-		health = 100
+		maxHealth = 150
+		health = this.maxHealth
 		image = "assets/enemies/chiken.png"
 		damageSound = "assets/sounds/chicken_damage.mp3"
 		spawnSound = "assets/sounds/chicken_spawn.mp3"
+		dyingSound = "assets/sounds/chicken_dead.mp3"
 		class = "chiken"
 		maps = {
 			'head' : null,
@@ -171,7 +206,7 @@
 
 		//Ammunation
 		currentBullets = 30;
-		totalBullets = 200;
+		totalBullets = 120;
 		maxBullets = 30;
 		damage = 30;
 		hsDamage = 50;
@@ -340,6 +375,7 @@
 
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
+		// spawnEnemie();
 	});
 
 	document.addEventListener("keypress", function(event) {
