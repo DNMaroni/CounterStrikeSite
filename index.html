@@ -1,5 +1,32 @@
 <script>
 
+	class Timer {
+		minute = 0;
+		second = 0;
+		timerLabel = '0:00';
+
+		start(){
+			setInterval(f => {
+			
+				this.timerLabel =
+				  this.minute +
+				  ':' +
+				  (this.second < 10 ? '0' + this.second : this.second);
+				
+				
+				this.second++;
+			
+				if (this.second == 60) {
+				  this.minute++;
+				  this.second = 0;
+				}
+
+				timer_element.innerHTML = this.timerLabel;
+				
+			}, 1000);
+		}
+	}
+
 	/**
 	 * @interface
 	*/
@@ -271,6 +298,7 @@
 	<!-- <div id="dummyContainer"><img src="assets/enemies/dummy.png"></div> -->
 	<div class="numberStartingContainer" id="number_start"></div>
 	<div class="playButton" id="playButton" onclick="startGame()"><img src="assets/interface/play.png"></div>
+	<div id="timer_element" class="timeContainer">0:00</div>
 	<div class="weaponsViewContainer">
 		<div class="numberContainer"><img src="assets/weapons/weapon_ak47.png" id="ak_view"><div class="number">1</div><hr></div><br><br><br>
 		<div class="numberContainer"><img src="assets/weapons/weapon_glock.png" id="glock_view"><div class="number">2</div></div>
@@ -311,6 +339,7 @@
 	var currentWeapon = 1;
 	var gameRunning = false;
 	var currentEnemy;
+	var timer;
 
 	function spawnEnemie(){
 		currentEnemy = enemies[Math.floor(Math.random() * enemies.length)];
@@ -334,6 +363,7 @@
 	function startGame(){
 
 		if(!gameRunning){
+
 			gameRunning = true;
 			playButton.style.display = 'none';
 			insertSoundOnBoard('assets/sounds/battle_song.mp3', 1, 0.02, true);
@@ -343,7 +373,11 @@
 				insertSoundOnBoard('assets/sounds/start_game.mp3', 1, 0.2);
 				
 				showTimerNumber(3);
-	
+				
+				setTimeout(function() { 
+					timer.start();
+				}, 1000);
+
 			}, 1000);
 		}
 	}
@@ -356,8 +390,6 @@
 			weapon_element.classList.add(weapons[currentWeapon].class);
 			current_ammo.innerHTML = weapons[currentWeapon].currentBullets;
 			total_ammo.innerHTML = weapons[currentWeapon].totalBullets;
-
-
 			updateInterface()
 		}, 100)
 	}
@@ -375,6 +407,7 @@
 
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
+		timer = new Timer();
 		// spawnEnemie();
 	});
 

@@ -107,7 +107,7 @@ body{
     width: 3rem;
     position: absolute;
     left: 1rem;
-    top: 1rem;
+    bottom: 1rem;
 }
 .playButton img{
     width: 100%;
@@ -198,6 +198,15 @@ body{
     height: 100%;
     background-color: #cc0000;
     transition: .20s all linear;
+}
+
+.timeContainer{
+    position: absolute;
+    bottom: 1.5%;
+    left: 5%;
+    font-size: 44px;
+    letter-spacing: 3px;
+    color: white;
 }
 
 @keyframes shake {
