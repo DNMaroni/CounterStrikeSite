@@ -4,9 +4,10 @@
 		minute = 0;
 		second = 0;
 		timerLabel = '0:00';
+		interval;
 
 		start(){
-			setInterval(f => {
+			this.interval = setInterval(f => {
 			
 				this.timerLabel =
 				  this.minute +
@@ -24,6 +25,14 @@
 				timer_element.innerHTML = this.timerLabel;
 				
 			}, 1000);
+		}
+
+		stop(){
+			clearInterval(this.interval);
+			this.second = 0;
+			this.minute = 0;
+			this.timerLabel = '0:00';
+			timer_element.innerHTML = this.timerLabel;
 		}
 	}
 
@@ -161,12 +170,12 @@
 			}
 		}
 
-		kill(){
+		kill(respawn = true){
 			var element = document.getElementById(this.id);
 			enemies.splice(enemies.indexOf(currentEnemy), 1);
 			element.remove();
 			insertSoundOnBoard(this.dyingSound, 1, 0.5);
-			spawnEnemie();
+			if(respawn) spawnEnemie();
 		}
 	}
 
@@ -220,6 +229,7 @@
 		newSound.volume = volume;
 		newSound.playbackRate = velocity;
 		newSound.play();
+		newSound.id = file;
 		newSound.addEventListener('ended',function(){
 			newSound.remove();
 		});
@@ -308,8 +318,8 @@
 		<p id="slash">/</p>
 		<p id="total_ammo"></p>
 	</div>
+	<div id="sound_board"></div>
     <div class="weaponContainer">
-        <div id="sound_board"></div>
         <img id="weapon_element">
     </div>
 </div>
@@ -331,17 +341,26 @@
 		2 : new Glock(),
 	};
 
-	var enemies = [
+	const defaultEnemies = [
 		new Chiken(),
 		new Terrorist1()
 	];
+
+	var enemies = defaultEnemies;
 	
 	var currentWeapon = 1;
 	var gameRunning = false;
 	var currentEnemy;
-	var timer;
+	var timer = new Timer();
+	const gameSound = 'assets/sounds/battle_song.mp3';
 
 	function spawnEnemie(){
+
+		if(enemies.length == 0){
+			stopGame(true);
+			return;
+		}
+
 		currentEnemy = enemies[Math.floor(Math.random() * enemies.length)];
 		currentEnemy.putOnBoard();
 	}	
@@ -364,9 +383,11 @@
 
 		if(!gameRunning){
 
+			enemies = defaultEnemies;
+			console.log(enemies);
 			gameRunning = true;
-			playButton.style.display = 'none';
-			insertSoundOnBoard('assets/sounds/battle_song.mp3', 1, 0.02, true);
+			playButton.firstChild.src = 'assets/interface/stop.png';
+			insertSoundOnBoard(gameSound, 1, 0.02, true);
 
 			setTimeout(function() { 
 		
@@ -379,6 +400,8 @@
 				}, 1000);
 
 			}, 1000);
+		}else{
+			stopGame(false);
 		}
 	}
 
@@ -390,7 +413,8 @@
 			weapon_element.classList.add(weapons[currentWeapon].class);
 			current_ammo.innerHTML = weapons[currentWeapon].currentBullets;
 			total_ammo.innerHTML = weapons[currentWeapon].totalBullets;
-			updateInterface()
+
+			updateInterface();
 		}, 100)
 	}
 
@@ -405,9 +429,29 @@
 		}
 	}
 
+	function stopGame(ended){
+
+		document.getElementById(gameSound).remove();
+		timer.stop();
+		gameRunning = false;
+		playButton.firstChild.src = 'assets/interface/play.png';
+
+		if(ended){
+			console.log('acabou');
+			return;
+		}
+
+		enemies = [];
+		
+		if(currentEnemy != undefined){
+			currentEnemy.kill(false);
+			currentEnemy = undefined;
+		} 
+
+	}
+
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
-		timer = new Timer();
 		// spawnEnemie();
 	});
 
