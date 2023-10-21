@@ -144,6 +144,7 @@
 		}
 
 		takeDamage(head = false){
+			console.log(this.health);
 			
 			if(this.health > 0){
 				
@@ -341,12 +342,12 @@
 		2 : new Glock(),
 	};
 
-	const defaultEnemies = [
+	let defaultEnemies = [
 		new Chiken(),
 		new Terrorist1()
 	];
 
-	var enemies = defaultEnemies;
+	let enemies = [...defaultEnemies];
 	
 	var currentWeapon = 1;
 	var gameRunning = false;
@@ -383,8 +384,8 @@
 
 		if(!gameRunning){
 
-			enemies = defaultEnemies;
-			console.log(enemies);
+			enemies = [...defaultEnemies];
+			/* aq criar uma função que reseta as vidas*/
 			gameRunning = true;
 			playButton.firstChild.src = 'assets/interface/stop.png';
 			insertSoundOnBoard(gameSound, 1, 0.02, true);
