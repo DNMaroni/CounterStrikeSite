@@ -178,6 +178,10 @@
 			insertSoundOnBoard(this.dyingSound, 1, 0.5);
 			if(respawn) spawnEnemie();
 		}
+
+		resetHealth(){
+			this.health = this.maxHealth
+		}
 	}
 
 	class Terrorist1 extends Enemy{
@@ -314,6 +318,11 @@
 		<div class="numberContainer"><img src="assets/weapons/weapon_ak47.png" id="ak_view"><div class="number">1</div><hr></div><br><br><br>
 		<div class="numberContainer"><img src="assets/weapons/weapon_glock.png" id="glock_view"><div class="number">2</div></div>
 	</div>
+	<div class="bestTimeContainer" id="best_time_element" style="display: none">
+		<h2>Best Times</h2>
+		<div class="timeList" id="best_time_timelist">
+		</div>
+	</div>
 	<div class="ammoContainer">
 		<p id="current_ammo"></p>
 		<p id="slash">/</p>
@@ -326,6 +335,9 @@
 </div>
 
 <script>
+
+	var bestTimes = JSON.parse(sessionStorage.getItem('bestTimes')) || [];
+	console.log(bestTimes);
     document.addEventListener('click', () => {
 		if(!weapons[currentWeapon].reloading){
 			handleShoot();
@@ -385,8 +397,14 @@
 		if(!gameRunning){
 
 			enemies = [...defaultEnemies];
-			/* aq criar uma função que reseta as vidas*/
+			
+			enemies.forEach((enemie) => {
+				enemie.resetHealth();
+			});
+
 			gameRunning = true;
+			bestTimeRender();
+
 			playButton.firstChild.src = 'assets/interface/stop.png';
 			insertSoundOnBoard(gameSound, 1, 0.02, true);
 
@@ -433,14 +451,25 @@
 	function stopGame(ended){
 
 		document.getElementById(gameSound).remove();
+
+		var finalTime = timer.timerLabel;
 		timer.stop();
 		gameRunning = false;
 		playButton.firstChild.src = 'assets/interface/play.png';
 
 		if(ended){
-			console.log('acabou');
+
+			bestTimes.push({
+				'finalTime': finalTime,
+				'day': getCurrentDate()
+			});
+			sessionStorage.setItem('bestTimes', JSON.stringify(bestTimes));
+
+			bestTimeRender();
 			return;
 		}
+
+		bestTimeRender();
 
 		enemies = [];
 		
@@ -451,8 +480,57 @@
 
 	}
 
+	function getCurrentDate(){
+		var dataAtual = new Date();
+
+		var dia = String(dataAtual.getDate()).padStart(2, '0');
+		var mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Lembre-se que os meses são base 0, então janeiro é 0
+		var ano = dataAtual.getFullYear();
+		var hora = String(dataAtual.getHours()).padStart(2, '0');
+		var minutos = String(dataAtual.getMinutes()).padStart(2, '0');
+
+		var dataFormatada = `${mes}/${dia}/${ano} ${hora}:${minutos}`;
+
+		return dataFormatada;
+	}
+
+	function compararPorFinalTime(a, b) {
+		var tempoA = a.finalTime.split(':').map(Number);
+		var tempoB = b.finalTime.split(':').map(Number);
+
+		if (tempoA[0] !== tempoB[0]) {
+			return tempoA[0] - tempoB[0];
+		} else {
+			return tempoA[1] - tempoB[1];
+		}
+	}
+
+	function bestTimeRender(){
+		
+		if(gameRunning){
+			best_time_element.style.display = "none";
+			return;
+		}
+
+		if(bestTimes.length > 0){
+
+			bestTimes.sort(compararPorFinalTime);
+
+			timesHtml = '';
+			count = 0;
+			bestTimes.forEach((time) => {
+				count++;
+				timesHtml += '<p><span>'+count+')</span>&nbsp;<strong>'+time['finalTime']+'</strong>&nbsp;&nbsp;&nbsp;'+time['day']+'</p>';
+			});
+
+			best_time_element.style.display = "initial";
+			best_time_timelist.innerHTML = timesHtml;
+		}
+	}
+
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
+		bestTimeRender();
 		// spawnEnemie();
 	});
 

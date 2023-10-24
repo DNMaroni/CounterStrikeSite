@@ -47,10 +47,43 @@ body{
 }
 
 .numberContainer .number{
-    position: absolute;
-    right: -15px;
-    top: 0;
     color: white;
+    padding-top: 5px;
+}
+
+.bestTimeContainer{
+    height: 20rem;
+    background-color: #322f2fa3;
+    width: 17rem;
+    overflow: auto;
+    padding: 10px 15px;
+    position: absolute;
+    left: 1rem;
+    bottom: 5rem;
+}
+
+.timeList{
+    padding-top: 1rem;
+    color: white;
+}
+
+.timeList p{
+}
+
+.timeList strong{
+    font-weight: 800;
+    font-size: 1.4rem;
+    text-decoration: underline;
+}
+
+.timeList span{
+    font-size: 1.2rem;
+}
+
+.bestTimeContainer h2{
+    font-size: 1.4rem;
+    color: white;
+    text-align: center;
 }
 
 .numberContainer hr{
