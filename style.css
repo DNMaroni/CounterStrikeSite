@@ -182,6 +182,19 @@ body{
     /* pointer-events: none; */
 }
 
+.terrorist2{
+    left: 60%;
+    top: 41.5%;
+    position: absolute;
+    overflow: initial;
+}
+.terrorist2 img{
+    width: 50px;
+    transform: rotate(-6deg);
+    user-select: none;
+    /* pointer-events: none; */
+}
+
 .damage{
     font-weight: 600;
     font-size: 17px;
@@ -211,7 +224,7 @@ body{
     border: solid 1px #aaa;
     position: absolute;
     left: 50%;
-    top: -6%;
+    top: -17%;
     transform: translate(-50%);
     height: 8px;
     border-radius: 5px;

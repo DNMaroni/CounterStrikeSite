@@ -184,6 +184,46 @@
 		}
 	}
 
+	class Terrorist3 extends Enemy{
+		id = "enemie_3"
+		maxHealth = 100
+		health = this.maxHealth
+		image = "assets/enemies/terrorist3.png"
+		damageSound = "assets/sounds/shot_hitting.mp3"
+		headshotSound = "assets/sounds/headshot_sound.mp3"
+		spawnSound = "assets/sounds/terrorist_spawn.mp3"
+		dyingSound = "assets/sounds/enemy_dying.mp3"
+		class = "terrorist3"
+		maps = {
+			'head' : '33,14,51,17,54,34,37,39',
+			'body' : [
+				'63,31,31,40,47,80,72,80',
+				'31,46,7,49,24,65,39,60'
+			]
+		}
+	}
+
+	class Terrorist2 extends Enemy{
+		id = "enemie_2"
+		maxHealth = 100
+		health = this.maxHealth
+		image = "assets/enemies/terrorist2.png"
+		damageSound = "assets/sounds/shot_hitting.mp3"
+		headshotSound = "assets/sounds/headshot_sound.mp3"
+		spawnSound = "assets/sounds/terrorist_spawn.mp3"
+		dyingSound = "assets/sounds/enemy_dying.mp3"
+		class = "terrorist2"
+		maps = {
+			'head' : '35,0,20,0,21,15,33,14',
+			'body' : [
+				'44,20,16,12,11,31',
+				'41,18,46,33,12,30',
+				'20,34,0,64,10,69,27,42',
+				'28,34,39,70,50,70,38,32'
+			]
+		}
+	}
+
 	class Terrorist1 extends Enemy{
 		id = "enemie_1"
 		maxHealth = 100
@@ -355,8 +395,9 @@
 	};
 
 	let defaultEnemies = [
-		new Chiken(),
-		new Terrorist1()
+		new Terrorist2()
+		// new Chiken(),
+		// new Terrorist1()
 	];
 
 	let enemies = [...defaultEnemies];
@@ -531,7 +572,7 @@
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
 		bestTimeRender();
-		// spawnEnemie();
+		spawnEnemie();
 	});
 
 	document.addEventListener("keypress", function(event) {
