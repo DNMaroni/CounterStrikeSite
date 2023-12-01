@@ -1,6 +1,8 @@
 # Counter Strike - Aim Trainer
-Jogo baseado no counter strike, desenvolvido utilizando apenas HTML+JS+CSS.
+Game inspired by "Counter Strike - GO", using only HTML+JS+CSS.
 
-Objetivo: ao atirar no botão de "play", inicia-se um timer, neste tempo, o objetivo é acertar o máximo possível de alvos e acumular o máximo de pontos.
+Made to play on 1920x1080 screen (FULL HD).
 
-Link: https://dnmaroni.github.io/CounterStrikeSite/
+<strong>How to play</strong>: the timer will start when clicking/shooting the "Play" button, after this, the objective is to kill the enemies the fastest you can, to create your own record.
+
+Game link: https://dnmaroni.github.io/CounterStrikeSite/
