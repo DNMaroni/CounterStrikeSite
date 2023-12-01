@@ -195,10 +195,11 @@
 		dyingSound = "assets/sounds/enemy_dying.mp3"
 		class = "terrorist3"
 		maps = {
-			'head' : '33,14,51,17,54,34,37,39',
+			'head' : '35,7,43,0,50,14,40,23',
 			'body' : [
-				'63,31,31,40,47,80,72,80',
-				'31,46,7,49,24,65,39,60'
+				'0,30,42,28,50,43,29,41',
+				'53,10,67,26,32,45,39,26',
+				'38,44,67,24,61,102',
 			]
 		}
 	}
@@ -214,12 +215,12 @@
 		dyingSound = "assets/sounds/enemy_dying.mp3"
 		class = "terrorist2"
 		maps = {
-			'head' : '35,0,20,0,21,15,33,14',
+			'head' : '23,-1,32,2,33,15,20,14',
 			'body' : [
-				'44,20,16,12,11,31',
-				'41,18,46,33,12,30',
-				'20,34,0,64,10,69,27,42',
-				'28,34,39,70,50,70,38,32'
+				'8,30,17,14,37,15,23,36',
+				'36,17,49,34,20,35,24,34',
+				'7,70,34,35,18,34,0,70,3,66,1,63,8,65,12,70',
+				'39,31,49,70,36,69,31,37'
 			]
 		}
 	}
@@ -359,7 +360,7 @@
 		<div class="numberContainer"><img src="assets/weapons/weapon_glock.png" id="glock_view"><div class="number">2</div></div>
 	</div>
 	<div class="bestTimeContainer" id="best_time_element" style="display: none">
-		<h2>Best Times</h2>
+		<h2>Best Time</h2>
 		<div class="timeList" id="best_time_timelist">
 		</div>
 	</div>
@@ -395,9 +396,10 @@
 	};
 
 	let defaultEnemies = [
-		new Terrorist2()
-		// new Chiken(),
-		// new Terrorist1()
+		new Terrorist3(),
+		new Chiken(),
+		new Terrorist1(),
+		new Terrorist2(),
 	];
 
 	let enemies = [...defaultEnemies];
@@ -572,7 +574,7 @@
 	document.addEventListener("DOMContentLoaded", (event) => {
 		updateInterface();
 		bestTimeRender();
-		spawnEnemie();
+		// spawnEnemie();
 	});
 
 	document.addEventListener("keypress", function(event) {

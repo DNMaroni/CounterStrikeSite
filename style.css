@@ -183,14 +183,28 @@ body{
 }
 
 .terrorist2{
-    left: 60%;
-    top: 41.5%;
+    left: 65%;
+    top: 49.5%;
     position: absolute;
     overflow: initial;
+    animation: terrorist2Move 1s infinite;
 }
 .terrorist2 img{
     width: 50px;
-    transform: rotate(-6deg);
+    transform: rotate(9deg);
+    user-select: none;
+    /* pointer-events: none; */
+}
+
+.terrorist3{
+    left: 31%;
+    top: 37.5%;
+    position: absolute;
+    overflow: initial;
+    animation: terrorist3Jump 1s infinite;
+}
+.terrorist3 img{
+    width: 70px;
     user-select: none;
     /* pointer-events: none; */
 }
@@ -287,6 +301,30 @@ body{
     }
     50% {
       transform: translate(300px, 80px);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+}
+
+@keyframes terrorist2Move {
+    0% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(30px, 5px);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+}
+
+@keyframes terrorist3Jump {
+    0% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(0, -50px);
     }
     100% {
       transform: translate(0, 0);
